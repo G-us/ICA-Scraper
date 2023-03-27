@@ -3,8 +3,9 @@ from scrapy.crawler import CrawlerProcess
 import colorama
 from colorama import Fore, Back, Style
 import re
+import sys
 
-GlutenFreeKeyWords = ["vete", "gluten", "mjöl", "råg"]
+GlutenFreeKeyWords = ["vete", "gluten", "mjöl", "råg", "korn", "kamut", "dinkel", "Vetekli", "kruskakli", "vetegroddar", "speltvete", "kamutvete", "durumvete", "havregryn", "mannagryn"]
 re_glutenFreeKeyWords = re.compile("|".join(GlutenFreeKeyWords))
 GlutenFree = False
 
@@ -37,16 +38,23 @@ class Spider(scrapy.Spider):
             print(Style.RESET_ALL)
             GlutenFree = True
         ThirdDiv = response.xpath("/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[3]/h2").get()
+        FourthDiv = response.xpath("/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[4]/h2").get()
         if "Ingredienser" in ThirdDiv:
             print("No Ursprungsland")
             ingredients = response.xpath(
                 "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[3]/div/text()").get()
             ingredients = ingredients.lower()
         else:
-            print("Ursprungsland")
-            ingredients = response.xpath(
-                "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[4]/div/text()").get()
-            ingredients = ingredients.lower()
+            if "Ingredienser" in FourthDiv:
+                print("Ursprungsland")
+                ingredients = response.xpath(
+                    "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[4]/div/text()").get()
+                ingredients = ingredients.lower()
+            else:
+                print("No ingredients")
+                sys.exit()
+
+
         if re_glutenFreeKeyWords.search(ingredients):
             print(Fore.RED + "Not Gluten Free")
             print(Style.RESET_ALL)
@@ -54,7 +62,7 @@ class Spider(scrapy.Spider):
             print("Here are the marked, potentially gluten containing ingredients: " + Fore.RED + convertTuple(re_glutenFreeKeyWords.findall(ingredients)) + Style.RESET_ALL)
             GlutenFree = False
         else:
-            print(Fore.GREEN + "GlutenFree, yay!")
+            print(Fore.GREEN + "Gluten free, yay!")
             print(Style.RESET_ALL)
             print("Here are the ingredients: " + ingredients)
             GlutenFree = True
