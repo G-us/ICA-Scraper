@@ -4,15 +4,16 @@ import colorama
 from colorama import Fore, Back, Style
 import re
 
-GlutenFreeKeyWords = ["glutenfritt", "glutenfri", "glutenfria"]
+GlutenFreeKeyWords = ["vete", "gluten", "mjöl", "råg"]
 re_glutenFreeKeyWords = re.compile("|".join(GlutenFreeKeyWords))
+GlutenFree = False
 
 
 def convertTuple(tup):
 # initialize an empty string
     str = ''
     for item in tup:
-        str = str + item
+        str = str + item + ", "
     return str
 
 class Spider(scrapy.Spider):
@@ -34,6 +35,7 @@ class Spider(scrapy.Spider):
                 "/html/body/div[1]/div/div[1]/div[2]/main/div/div[1]/div/div[2]/div[2]/div/div/div/div[1]/div/div/span/text()").get() == "Glutenfritt":
             print(Fore.GREEN + "Gluten Free")
             print(Style.RESET_ALL)
+            GlutenFree = True
         ThirdDiv = response.xpath("/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[3]/h2").get()
         if "Ingredienser" in ThirdDiv:
             print("No Ursprungsland")
@@ -46,14 +48,16 @@ class Spider(scrapy.Spider):
                 "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[4]/div/text()").get()
             ingredients = ingredients.lower()
         if re_glutenFreeKeyWords.search(ingredients):
-            print(Fore.GREEN + "Gluten Free")
-            print(Style.RESET_ALL)
-            print("Here are the ingredients: " + ingredients)
-            print("Here are the gluten free ingredients: " + Fore.GREEN + convertTuple(re_glutenFreeKeyWords.findall(ingredients)) + Style.RESET_ALL)
-        else:
             print(Fore.RED + "Not Gluten Free")
             print(Style.RESET_ALL)
             print("Here are the ingredients: " + ingredients)
+            print("Here are the marked, potentially gluten containing ingredients: " + Fore.RED + convertTuple(re_glutenFreeKeyWords.findall(ingredients)) + Style.RESET_ALL)
+            GlutenFree = False
+        else:
+            print(Fore.GREEN + "GlutenFree, yay!")
+            print(Style.RESET_ALL)
+            print("Here are the ingredients: " + ingredients)
+            GlutenFree = True
 
 
 c = CrawlerProcess({
