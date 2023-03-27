@@ -4,8 +4,7 @@ class Spider(scrapy.Spider):
     name = "quotes"
 
     def start_requests(self):
-        urls = [    'https://handlaprivatkund.ica.se/stores/1004584/products/Kalkon-R%C3%B6kt-tunna-skivor-200g-P%C3%A4rsons/1026006',
-        ]
+        urls = [input("Input URL please: ")]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.on_response)
 
