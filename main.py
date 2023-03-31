@@ -14,6 +14,14 @@ GlutenFreeKeyWords = [
 re_glutenFreeKeyWords = re.compile("|".join(GlutenFreeKeyWords))
 GlutenFree = False
 
+layout = [[sg.Text("Input Link")],
+          [sg.Input(key='-INPUT-', do_not_clear=False)],
+          [sg.Text(size=(40, 1), key='-OUTPUT-')],
+          [sg.Button('Submit'), sg.Button('Quit')],
+          [sg.Image(filename='', key='-IMAGE-', size=(500, 500))]]
+
+window = sg.Window('Gluten Free Checker', layout)
+
 
 def convertTuple(tup):
     # initialize an empty string
@@ -28,9 +36,6 @@ class Spider(scrapy.Spider):
     name = "ICAScraper"
     i = 0
     productName = ""
-
-
-
 
     def start_requests(self):
         urls = [InputURL]
@@ -86,8 +91,6 @@ class Spider(scrapy.Spider):
             print(Style.RESET_ALL)
             print("Just to make sure, here are the ingredients: " + ingredients)
             window['-OUTPUT-'].update('Gluten Free')
-            window["Again"].update(visible=True, disabled=False)
-            window.finalize()
         else:
             print(Fore.BLUE + "Result: " + Fore.RED + "Not Gluten Free")
             print(Style.RESET_ALL)
@@ -97,9 +100,6 @@ class Spider(scrapy.Spider):
                 Fore.RED + convertTuple(re_glutenFreeKeyWords.findall(ingredients)) +
                 Style.RESET_ALL)
             window['-OUTPUT-'].update('Not Gluten Free')
-            window["Again"].update(visible=True, disabled=False)
-            window.finalize()
-
 
 
 c = CrawlerProcess({
@@ -108,15 +108,7 @@ c = CrawlerProcess({
     'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7',
 })
 
-
 while True:
-    layout = [[sg.Text("Input Link")],
-              [sg.Input(key='-INPUT-', do_not_clear=False)],
-              [sg.Text(size=(40, 1), key='-OUTPUT-')],
-              [sg.Button('Submit'), sg.Button('Quit')],
-              [sg.Button('Again', disabled=True, visible=False)]]
-
-    window = sg.Window('Gluten Free Checker', layout)
     event, values = window.read()
     global InputURL
     InputURL = values["-INPUT-"]
@@ -128,7 +120,3 @@ while True:
         print(InputURL)
         c.crawl(Spider)
         c.start()
-    elif event == "Again":
-        print("Again")
-        window['-OUTPUT-'].update('hello')
-
