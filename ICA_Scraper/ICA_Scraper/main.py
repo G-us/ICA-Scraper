@@ -14,8 +14,11 @@ GlutenFreeKeyWords = [
     "vete", "gluten", "råg", "korn", "kamut", "dinkel", "vetekli", "kruskakli", "spelt", "durum", "havregryn",
     "mannagryn"
 ]
-re_glutenFreeKeyWords = re.compile("|".join(GlutenFreeKeyWords))
-GlutenFree = False
+
+LactoseKeyWords = [
+    "mjölk", "mjölkprotein", "mjölkproteinhydrolysat", "mjölkproteinisolat", "mjölkproteinkoncentrat", "laktose", "grädde", "smör", "ost"
+]
+
 
 SubmitImage = b'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEN0lEQVRoge3YW4hVVRzH8c+a8VKaWg6Wgr2UURIS6tGJSEYjMiuDXgyjnrq+SChIZUgRdIHAqAyiG0UvaU9lkBdQCy+lM2NjPkZaLyppalpoOmf1sM9pduPsc87ex4EJ5vu0zjpr/X/7t9dl/9dimGGGGeb/RGg2wA7GXU5HpD0wLdIWacEpHAp0ldk6lyPNP242hY10Mgsr8ADG1Gl+IbK9hTdn81VRzVrkNrKTq0ezJrC08ubzELEr8tQcDuTVrkUuI13Mi6zDlH5/HY9sD/QEjpTpDUwMTI904Lq0VuRsYFmJD5q3kNCwkb3cj3WBy1LV3ZFXDrJhCX9n9e2kPbIyJNOwOooRL5Z4qdCT96MhI13MK7O5aqLyRp+ZzdpAuVGxLu6IfIxrK1URT5d4O++D96eukW4mlenRN51ORu6bw84igj9yzTm+xsxK1fleOtrZXSRelbqLtcwb+kycxeKiJmAGR3EXfqpUjWzlw05GFo1JHSOdzAosTVU9W2JHM4JQ4lhkib51NR2PNhOz3oisqG6xkR9+Zm0zYmnmsC/wTqpq+Qv5t/N/yVwjB7jibDINxlQaPjib9UWFBqIzmbIHMRqxzO1z2VUkVuYbOMd8fSZOHOWLIgK1KHE4srnyM7SwqGisTCO9tFfLZb69h3NFRepQNSKmNPOSaSQwLVXuKSpQj8j+gTTzUstIW7VcTtbKoBD/mxVPVDCRzTSSTggDvUWCN0JvKjOItMSCcWptd6dSjdpqtGuKUanYgT9CkrbkptbUOlQtl5MP1mBxU6p8sGiQWka6Uz874iU4TWawIFXuzmxVh1prZGusrI3A1H3MKyqSxSbGhuR4oKKzpWisTCMlDge+qWqUWVlUJIs2HotcVfn52/jBMAKRt/Qtvnu7m/jy9mcPk7E6pfXeDU18dGsaKfFloglCLx99x9SiYlW2MSLwqb4d69h51jQTs6aRQGzhSZU3FZg8go2dF5/ZG2YbI8bxSeDOlM6q2/i9aEwaSJtnJenJCn1T7Gbs7uLWvGKdTBmfnA4fSteXeXwfV+aNl6bhLbWLlyPPVftELgTex2slfq3Vt3IkeCLyfEjSkIHY08rCmZxs+OlT5Po27E12rlcDranq89iKzWX2j+LwBXojbdXroMBiTGhAorCZ3B+5vcyvjETRTPUEVkmOugsG+L+QmdxHyzlsP82MwHL8kqPricjrLdxY4t2RyShtG6Dd3F425V0zTaUd62m9PklfFkkORdMwIdISOB0rl9iBLZGNJf5K9+9h7Hk2uAQjc8nzp/W0TiIs4EIj7Tcxti3DTGTPGRYuaMDMYCWCubgUZoaEEZo3M2SMUHfNfH+au7PMFL4QGwxu4c/j2btZ+ziWZfUdUiNSZaBpFvmsxMNZ9wdDakSqLLx4ZD4/wyODeQkyqPQwtpPVzd7UDzPMMMMMPf4BTrogPAcmKlcAAAAASUVORK5CYII='
 ExitImage = b'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEkUlEQVR4Xr2az08TQRTHF0TS8rOoiQcvRq96QKPhpsYD/4ExMQjbtBAxEAjBiweVg4nhoCeVGIMJB00sbSEQCPKrUAoXT578CzCgiAkY+aHP93botoXdzuzMtE02admZN+8z35k382YwDM4Henr6YXz8Oq9cId9De3tQ2j7s7ZWggUEwDIDKSoCxsUZpYwoVoaLih+VDOHzHsxnY3T0OodCAZSD9VFTsQCzm3Zjn1lkFbKsK/P7vOT6Y5lNhcwhRhhBvcwykYfz+bRgZCQsbkyyIbZxEiA1HH0KhV1yzCFECpjnkaCADswXDww+4xiQLoBLnXSHSPpjmYF7zqEQsL0TakM+3jQ12SfrqWg2VuIwQm0I+hEJPHA2hEhNCBjLK/IZIpFcXDESjTTixdz35YJq57UNr62tPBjLKAMTjD1VhYHS0D5XIBJbsIMP7Hg53sujQ3d0rBZENE4m8kIVBJSalIZgP/6Cz8waDqatbV4Kh3ozHB7zC4Jz4qggBEAh8y2kX/6AG4/MBzpmoKAwGiw3tEJYqyeRZhMldgHjj8/B7UiYW+8yDQSVAA8Qv9/CXSl1BGLYlkH1ImeFhrO78QVB1iNraXex4f/61JJlsRJgtaRDqAIIhhwEupRvD7xe0KFFbC7CwUM9TnU3+VKoJA8COEgwNs0iEYBrwqcfoBLhOyCtNHRQIACwt3RKCsHtwcfGRVVF2iKWViccB1wkdwwkgkXjsCcKGWV5+rgxTXg5Aj0qH0HBKpd5JQWQpE8VhpuaIKkQisaEEYcOkUkPKysjAsDnhGgGl4GBx8X1RlSGIhQW9EFnKvCmKMgSRTBYGwoZJJj8VFIatE4WFyFLmS0GGWSHmBG8iofSrWpUhiESCFtAyXtva38PKCkBVlXpopuMmjE74yb9/ykNQKkuHjZYaa2uGsbcnayJTb3/fMNbX6be0P9JOWHsn2fTUaU1h+UxxJrk92SmfUN0AOsGwfKY4MFryiXyrPCefkR5C2RW15BMiW5WDfEaL04eNFFwJp7Q5EtnUClM0JQ7DkDLxeJ8WGO3RSWRoZZdhmeZdJRgtmZ2OxIopc1sKRosS7IIIYGJCfQfA1plWTzDWnFBdJ2jrQgAA5/A5BVNTANXVatsZts6EhGC0RCdyeGbGOkGxF1GAqzA3B1BTowbD1pn7eWFQiTnlbQc5Oj1NEKePhHCAEzA7qwcmGnW+IKX7QWUISopwK86TnhInoLJeI1h2eTZn7h1pSwvE/DwXwh5qBKPj3CwWu2nD4MReVeodyRwbz6pAOdNk60yJBYMQf6RBBIeT23DD0xl1Zdra2OUoXsafQZC/nmHYCaDwcHKFWV6WhwkGc9vHy9AuTyAHOTZvYou+t5TxeqLZ3OzciXg9/VEIhpTQfQJII4PmjGgAQCXw/wKOuXYUKjOZF4adOw2J9rTXcng685ML09JCEPzTFlTmgyMMi05qO1EBMlTmmSsMU4IPYcd503yZA8POYq8J+KGlCHZYwxEYtznBaxGjWb8Fw04AL/LKF+K9HQCCwVkl+3gZ34tKBJSMKFaGjg7ucP4Pc7yAommR+nUAAAAASUVORK5CYII='
@@ -44,9 +47,10 @@ def ResizeImage(image, size):
         return image
 
 
-layout = [[sg.Text("Input Link", text_color='black')],
+layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Deez Nuts'), k='-KEYWORDS-', default_value='Gluten')],
+          [sg.Text("Input Link", text_color='black')],
           [sg.Input(key='-INPUT-', do_not_clear=False)],
-          [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"), sg.Text(key='-GLUTENSTATUS-', border_width=0, pad=0)],
+          [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"), sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
           [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'), sg.Image(key="-IMAGE-", pad=0)],
           [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0), sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
@@ -78,27 +82,14 @@ class Spider(scrapy.Spider):
     def on_response(self, response):
         self.CheckForIngredients(response, headerNumber=self.SearchHeaders(response))
 
-    def parse(self, response):
-        print("Parsing Image")
-        item = ImageItem()
-        item['image_urls'] = response.css('img::attr(src)').getall()
-        print(item)
-        yield item
-
-    def url_join(self, urls, response):
-        joined_urls = []
-        for url in urls:
-            joined_urls.append(response.urljoin(url))
-        return joined_urls
-
     def SearchHeaders(self, response):
         global productName
         productName = (response.xpath(
             "/html/body/div[1]/div/div[1]/div[2]/main/div/div[1]/div/div[2]/div/div[1]/h1/text()").get())
         global productImage
-        #self.parse(response)
-        print("test")
         i = 0
+
+
         while i < 10:
             headerTitle = (response.xpath(
                 "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[" + str(i) + "]/h2").get())
@@ -117,12 +108,14 @@ class Spider(scrapy.Spider):
         raise scrapy.exceptions.CloseSpider("No ingredients found")
 
     def CheckForIngredients(self, response, headerNumber):
+
         if response.xpath(
                 "/html/body/div[1]/div/div[1]/div[2]/main/div/div[1]/div/div[2]/div[2]/div/div/div/div[1]/div/div/span/text()").get() == "Glutenfritt":
             print(Fore.GREEN + "Gluten Free")
             print(Style.RESET_ALL)
             GlutenFree = True
             self.PrintResult("Certification", GlutenFree)
+            return
 
         ingredients = (response.xpath("/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[" + str(
             headerNumber) + "]/div/text()").get())
@@ -143,7 +136,7 @@ class Spider(scrapy.Spider):
             print(Style.RESET_ALL)
             print("Just to make sure, here are the ingredients: " + ingredients)
             window['-PRODUCTNAME-'].update(productName + " is ")
-            window['-GLUTENSTATUS-'].update('GLUTEN FREE', text_color='green')
+            window['-ALLERGENSTATUS-'].update('GLUTEN FREE', text_color='green')
             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
         else:
             print(Fore.BLUE + "Result: " + Fore.RED + "Not Gluten Free")
@@ -154,7 +147,7 @@ class Spider(scrapy.Spider):
                 Fore.RED + convertTuple(re_glutenFreeKeyWords.findall(ingredients)) +
                 Style.RESET_ALL)
             window['-PRODUCTNAME-'].update(productName + " is ")
-            window['-GLUTENSTATUS-'].update('NOT GLUTEN FREE', text_color='red')
+            window['-ALLERGENSTATUS-'].update('NOT GLUTEN FREE', text_color='red')
             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
 
 
@@ -168,6 +161,9 @@ while True:
     event, values = window.read()
     global InputURL
     InputURL = values["-INPUT-"]
+    if values["-KEYWORDS-"] == "Gluten":
+        re_glutenFreeKeyWords = re.compile("|".join(GlutenFreeKeyWords))
+        GlutenFree = False
     # End program if user closes window or
     # presses the OK button
     if event == sg.WIN_CLOSED or event == '-EXIT-':
