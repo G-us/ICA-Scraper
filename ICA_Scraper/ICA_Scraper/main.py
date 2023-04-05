@@ -107,6 +107,8 @@ class Spider(scrapy.Spider):
   name = "ICAScraper"
   i = 0
   productName = ""
+  global IngredientsHeaderNum
+  global AllergenHeaderNum
 
   def start_requests(self):
     urls = [InputURL]
@@ -114,8 +116,8 @@ class Spider(scrapy.Spider):
       yield scrapy.Request(url=url, callback=self.on_response)
 
   def on_response(self, response):
-    self.CheckForIngredients(response,
-                             headerNumber=self.SearchHeaders(response))
+    self.SearchHeaders(response)
+    self.CheckForIngredients(response, IngredientsHeaderNum)
 
   def SearchHeaders(self, response):
     global productName
@@ -132,18 +134,19 @@ class Spider(scrapy.Spider):
       if headerTitle is None:
         i += 1
         continue
+      if "Allergener" in headerTitle:
+        print("Found \"Allergener\" in header: " + str(i))
+        AllergenHeaderNum = i
       elif "Ingredienser" in headerTitle:
         print("Found \"Ingredienser\" in header: " + str(i))
-        headerNumber = i
-        return headerNumber
-        break
+        IngredientsHeaderNum = i
       else:
         i += 1
     print(Style.BRIGHT + Fore.RED + "NO INGREDIENTS FOUND")
     window['-OUTPUT-'].update('No ingredients found', text_color='red')
     raise scrapy.exceptions.CloseSpider("No ingredients found")
 
-  def CheckForIngredients(self, response, headerNumber):
+  def CheckForIngredients(self, response, IngredientsHeaderNum):
 
     if response.xpath(
         "/html/body/div[1]/div/div[1]/div[2]/main/div/div[1]/div/div[2]/div[2]/div/div/div/div[1]/div/div/span/text()"
@@ -164,7 +167,7 @@ class Spider(scrapy.Spider):
 
     ingredients = (response.xpath(
       "/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/div/div/div[" +
-      str(headerNumber) + "]/div/text()").get())
+      str(IngredientsHeaderNum) + "]/div/text()").get())
     ingredients = str(ingredients).lower()
     ingredients = textwrap3.fill(ingredients, WrapSize)
 
@@ -192,7 +195,7 @@ class Spider(scrapy.Spider):
       print(Style.RESET_ALL)
       print("Here are the ingredients: " + ingredients)
       print(
-        "Here are the marked, potentially gluten containing ingredients: " +
+        "Here are the marked, potentially allergen containing ingredients: " +
         Fore.RED + convertTuple(re_SelectedKeyWords.findall(ingredients)) +
         Style.RESET_ALL)
       window['-PRODUCTNAME-'].update(productName + " is ")
@@ -220,6 +223,7 @@ while True:
     AllergenFree = False
   elif values["-KEYWORDS-"] == "Deez Nuts":
     re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
+    AllergenFree = False
   # End program if user closes window or
   # presses the OK button
   if event == sg.WIN_CLOSED or event == '-EXIT-':
