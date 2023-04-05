@@ -13,6 +13,9 @@ urllib3 = "^1.26.12"
 requests = "^2.28.1"
 Scrapy = "^2.7.0"
 colorama = "^0.4.6"
+Pillow = "^9.5.0"
+PySimpleGUI = "^4.60.4"
+textwrap3 = "^0.9.2"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"
