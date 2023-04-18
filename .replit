@@ -1,10 +1,10 @@
 # The command that runs the program. If the interpreter field is set, it will have priority and this run command will do nothing
-run="python main.py"
+run="python ICA_Scraper/ICA_Scraper/main.py"
 
 
 # The primary language of the repl. There can be others, though!
 language = "python3"
-entrypoint = "main.py"
+entrypoint = "ICA_Scraper/ICA_Scraper/main.py"
 # A list of globs that specify which files and directories should
 # be hidden in the workspace.
 hidden = ["venv", ".config", "**/__pycache__", "**/.mypy_cache", "**/*.pyc"]
@@ -34,6 +34,7 @@ PYTHONPATH = "${VIRTUAL_ENV}/lib/python3.10/site-packages"
 REPLIT_POETRY_PYPI_REPOSITORY = "https://package-proxy.replit.com/pypi/"
 MPLBACKEND = "TkAgg"
 POETRY_CACHE_DIR = "${HOME}/${REPL_SLUG}/.cache/pypoetry"
+DISPLAY = "$DISPLAY"
 
 # Enable unit tests. This is only supported for a few languages.
 [unitTest]
@@ -104,3 +105,6 @@ pattern = "**/*.py"
 
 [languages.python3.languageServer]
 start = "pylsp"
+
+[deployment]
+run = ["sh", "-c", "python3 main.py"]
