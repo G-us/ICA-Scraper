@@ -111,13 +111,13 @@ class Spider(scrapy.Spider):
   global AllergenHeaderNum
 
   def start_requests(self):
-    urls = [InputURL]
+    urls = ["https://handlaprivatkund.ica.se/stores/1004584/products/L%C3%A4sk-P%C3%A5skmust-1-4l-Apotekarnes/1000869"]
     for url in urls:
       yield scrapy.Request(url=url, callback=self.on_response)
 
   def on_response(self, response):
-    self.SearchHeaders(response)
-    self.CheckForIngredients(response, IngredientsHeaderNum)
+    
+    self.CheckForIngredients(response, self.SearchHeaders(response))
 
   def SearchHeaders(self, response):
     global productName
@@ -134,16 +134,15 @@ class Spider(scrapy.Spider):
       if headerTitle is None:
         i += 1
         continue
-      if "Allergener" in headerTitle:
-        print("Found \"Allergener\" in header: " + str(i))
-        AllergenHeaderNum = i
       elif "Ingredienser" in headerTitle:
         print("Found \"Ingredienser\" in header: " + str(i))
         IngredientsHeaderNum = i
+        return IngredientsHeaderNum
+        break
       else:
         i += 1
     print(Style.BRIGHT + Fore.RED + "NO INGREDIENTS FOUND")
-    window['-OUTPUT-'].update('No ingredients found', text_color='red')
+    window["-INGREDIENTS-"].update('No ingredients found', text_color='red')
     raise scrapy.exceptions.CloseSpider("No ingredients found")
 
   def CheckForIngredients(self, response, IngredientsHeaderNum):
@@ -214,7 +213,7 @@ c = CrawlerProcess({
 while True:
   event, values = window.read()
   global InputURL
-  InputURL = values["-INPUT-"]
+  InputURL = "https://handlaprivatkund.ica.se/stores/1004584/products/L%C3%A4sk-P%C3%A5skmust-1-4l-Apotekarnes/1000869"
   if values["-KEYWORDS-"] == "Gluten":
     re_SelectedKeyWords = re.compile("|".join(GlutenFreeKeyWords))
     AllergenFree = False

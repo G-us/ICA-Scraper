@@ -667,6 +667,14 @@ w3lib = ">=1.17.0"
 "zope.interface" = ">=5.1.0"
 
 [[package]]
+name = "scrapy-splash"
+version = "0.9.0"
+description = "JavaScript support for Scrapy using Splash"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "service-identity"
 version = "21.1.0"
 description = "Service identity verification for pyOpenSSL & cryptography."
@@ -883,7 +891,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "c2561a936013cd8cf353f41f99938bc347480e90699aff3ac75456d6938e299f"
+content-hash = "fb45b86759951a617b601f2cdc5df94e0c5cbfb74505a81dd747c66e027d3605"
 
 [metadata.files]
 aiohttp = []
@@ -941,6 +949,7 @@ requests = []
 requests-file = []
 rope = []
 scrapy = []
+scrapy-splash = []
 service-identity = []
 six = []
 textwrap3 = []
