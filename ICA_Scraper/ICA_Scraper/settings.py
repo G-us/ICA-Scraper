@@ -43,15 +43,19 @@ DOWNLOAD_DELAY = 0
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-# SPIDER_MIDDLEWARES = {
-#    "ICA_Scraper.middlewares.IcaScraperSpiderMiddleware": 543,
-# }
+SPIDER_MIDDLEWARES = {
+   #"ICA_Scraper.middlewares.IcaScraperSpiderMiddleware": 543,
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    "ICA_Scraper.middlewares.IcaScraperDownloaderMiddleware": 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+   #"ICA_Scraper.middlewares.IcaScraperDownloaderMiddleware": 543,
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -66,8 +70,11 @@ ITEM_PIPELINES = {
     "scrapy.pipelines.images.ImagesPipeline": 1
 }
 
+SPLASH_URL = 'http://178.128.195.144:8050'
+
 IMAGES_STORE = '/home/henryp/PycharmProjects/ICA-Scraper/ICA_Scraper/ICA_Scraper'
 
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 # AUTOTHROTTLE_ENABLED = True

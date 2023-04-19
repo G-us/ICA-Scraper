@@ -3,7 +3,6 @@ import sys
 import PySimpleGUI as sg
 
 
-
 layout = [
           [sg.Button('ICA', button_color=('white', 'red'), key='ICA'),
            sg.Button('Coop', button_color=('white', 'green'), key='COOP')]
