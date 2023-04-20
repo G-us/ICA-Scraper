@@ -18,7 +18,8 @@ while True:
     if event == 'ICA':
         import ICAScraper
         print("ICA selected")
+        window.close()
     if event == 'COOP':
         import CoopScraper
         print("Coop selected")
-window.close()
+        window.close()
