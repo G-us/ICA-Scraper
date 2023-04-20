@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ICA-Scraper.iml" filepath="$PROJECT_DIR$/.idea/ICA-Scraper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SafeBites.iml" filepath="$PROJECT_DIR$/.idea/SafeBites.iml" />
     </modules>
   </component>
 </project>
