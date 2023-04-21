@@ -77,9 +77,13 @@ class Spider(scrapy.Spider):
 
 
     def start_requests(self):
+      if InputURL == "":
+        urls = ["https://handlaprivatkund.ica.se/stores/1004584/products/Normalsaltat-600g-Bregott/1268482"]
+        
+      else:
         urls = [InputURL]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.on_response)
+      for url in urls:
+          yield scrapy.Request(url=url, callback=self.on_response)
 
     def on_response(self, response):
         self.CheckForIngredients(response, headerNumber=self.SearchHeaders(response))
