@@ -9,6 +9,12 @@ class Spider(scrapy.Spider):
     i = 0
     productName = ""
 
+    AcceptCookiesScp = 
+  """
+  function main(splash)
+    local element
+  """
+
     def start_requests(self):
         urls = [
             "https://www.coop.se/handla/varor/mejeri-agg/yoghurt-fil/smaksatt-yoghurt/yoghurt-jordgubb-smultron-7310865018465"
