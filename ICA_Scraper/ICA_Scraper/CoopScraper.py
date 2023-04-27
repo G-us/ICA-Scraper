@@ -1,6 +1,7 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 import scrapy_splash
+import scrapy_playwright
 
 
 class Spider(scrapy.Spider):
@@ -9,23 +10,14 @@ class Spider(scrapy.Spider):
     i = 0
     productName = ""
 
-    AcceptCookiesScp = 
-  """
-  function main(splash)
-    local element
-  """
 
     def start_requests(self):
         urls = [
-            "https://www.coop.se/handla/varor/mejeri-agg/yoghurt-fil/smaksatt-yoghurt/yoghurt-jordgubb-smultron-7310865018465"
+            "https://www.sj.se/kop-resa/valj-resa/Sunne/Karlstad%20C/2023-04-27"
         ]
-        cookies = {
-            "__cmpcccu14118": "aBPqj15JgAwAzADYBUAAIABwAFwAXABoADkAHgAfgBQAFIALgAggBeAEOA4YBxID1QIMgQcAigBMsCpwJLAUaAGCQREg7KsEqwhXrCvdGkuRowkUJSGzziH4cRXW",
-            "__cmpconsent14118": "BPqj15JPqj15JAfKFBSVDXAAAAAxmAjAADAAoADAAKgAXAAyAB4AEAAJAATgAqABaADIAGgAPYAiACKAEcAJIATAAngBRgCoAKoAWQAwgCAAFEAPMAhABLQCkAF1APUAfoBGoCQQGMg"
-        }
         for url in urls:
             print("Scraping URL")
-            yield scrapy_splash.SplashRequest(url=url, callback=self.on_response, headers={'Cookie': cookies}, meta={"splash": {"cookiejar": "some_name"}})
+            yield scrapy.Request(url=url, meta={"playwright": True}, callback = self.on_response)
 
     def on_response(self, response):
         print(response.body)
