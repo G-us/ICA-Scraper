@@ -1,5 +1,8 @@
 { pkgs }: {
   deps = [
+    pkgs.busybox
+    pkgs.chromium
+    pkgs.chromedriver
     pkgs.python38Full
   ];
   env = {

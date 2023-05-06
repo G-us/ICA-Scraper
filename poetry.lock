@@ -30,6 +30,14 @@ python-versions = ">=3.6"
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "async-generator"
+version = "1.10"
+description = "Async generators and context managers for Python 3.5+"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -159,6 +167,17 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "exceptiongroup"
+version = "1.1.1"
+description = "Backport of PEP 654 (exception groups)"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+test = ["pytest (>=6)"]
+
+[[package]]
 name = "filelock"
 version = "3.8.0"
 description = "A platform independent file lock."
@@ -193,6 +212,14 @@ dotenv = ["python-dotenv"]
 name = "frozenlist"
 version = "1.3.1"
 description = "A list-like structure which implements collections.abc.MutableSequence"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "h11"
+version = "0.14.0"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 category = "main"
 optional = false
 python-versions = ">=3.7"
@@ -350,6 +377,17 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "outcome"
+version = "1.2.0"
+description = "Capture the outcome of Python function calls."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+attrs = ">=19.2.0"
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -505,6 +543,25 @@ description = "Python GUIs for Humans. Launched in 2018. It's 2022 & PySimpleGUI
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "pysocks"
+version = "1.7.1"
+description = "A Python SOCKS client module. See https://github.com/Anorov/PySocks for more information."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
+name = "python-dotenv"
+version = "1.0.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.extras]
+cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-lsp-jsonrpc"
@@ -675,6 +732,20 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "selenium"
+version = "4.9.0"
+description = ""
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+certifi = ">=2021.10.8"
+trio = ">=0.17,<1.0"
+trio-websocket = ">=0.9,<1.0"
+urllib3 = {version = ">=1.26,<2.0", extras = ["socks"]}
+
+[[package]]
 name = "service-identity"
 version = "21.1.0"
 description = "Service identity verification for pyOpenSSL & cryptography."
@@ -702,6 +773,22 @@ description = "Python 2 and 3 compatibility utilities"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "sniffio"
+version = "1.3.0"
+description = "Sniff out which async library your code is running under"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "sortedcontainers"
+version = "2.4.0"
+description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "textwrap3"
@@ -740,6 +827,54 @@ description = "A lil' TOML parser"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "tqdm"
+version = "4.65.0"
+description = "Fast, Extensible Progress Meter"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["py-make (>=0.1.0)", "twine", "wheel"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
+
+[[package]]
+name = "trio"
+version = "0.22.0"
+description = "A friendly Python library for async concurrency and I/O"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+async-generator = ">=1.9"
+attrs = ">=19.2.0"
+cffi = {version = ">=1.14", markers = "os_name == \"nt\" and implementation_name != \"pypy\""}
+exceptiongroup = {version = ">=1.0.0rc9", markers = "python_version < \"3.11\""}
+idna = "*"
+outcome = "*"
+sniffio = "*"
+sortedcontainers = "*"
+
+[[package]]
+name = "trio-websocket"
+version = "0.10.2"
+description = "WebSocket library for Trio"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+exceptiongroup = "*"
+trio = ">=0.11"
+wsproto = ">=0.14"
 
 [[package]]
 name = "twisted"
@@ -808,6 +943,9 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
 
+[package.dependencies]
+PySocks = {version = ">=1.5.6,<1.5.7 || >1.5.7,<2.0", optional = true, markers = "extra == \"socks\""}
+
 [package.extras]
 brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
 secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "urllib3-secure-extra", "ipaddress"]
@@ -820,6 +958,20 @@ description = "Library of web-related functions"
 category = "main"
 optional = false
 python-versions = ">=3.6"
+
+[[package]]
+name = "webdriver-manager"
+version = "3.8.6"
+description = "Library provides the way to automatically manage drivers for different browsers"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+packaging = "*"
+python-dotenv = "*"
+requests = "*"
+tqdm = "*"
 
 [[package]]
 name = "werkzeug"
@@ -842,6 +994,17 @@ description = "A patch parsing and application library."
 category = "dev"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "wsproto"
+version = "1.2.0"
+description = "WebSockets state-machine based protocol implementation"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+
+[package.dependencies]
+h11 = ">=0.9.0,<1"
 
 [[package]]
 name = "yapf"
@@ -891,11 +1054,12 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "fb45b86759951a617b601f2cdc5df94e0c5cbfb74505a81dd747c66e027d3605"
+content-hash = "b6bc0d856b3fd749afdcee0792c0a51f3e977155b44024527ae72a4db1cdbf5e"
 
 [metadata.files]
 aiohttp = []
 aiosignal = []
+async-generator = []
 async-timeout = []
 attrs = []
 automat = []
@@ -908,9 +1072,11 @@ constantly = []
 cryptography = []
 cssselect = []
 debugpy = []
+exceptiongroup = []
 filelock = []
 flask = []
 frozenlist = []
+h11 = []
 hyperlink = []
 idna = []
 importlib-metadata = []
@@ -925,6 +1091,7 @@ lxml = []
 markupsafe = []
 multidict = []
 numpy = []
+outcome = []
 packaging = []
 parsel = []
 parso = []
@@ -940,6 +1107,8 @@ pyopenssl = []
 pyparsing = []
 pypydispatcher = []
 pysimplegui = []
+pysocks = []
+python-dotenv = []
 python-lsp-jsonrpc = []
 pytoolconfig = []
 queuelib = []
@@ -950,20 +1119,28 @@ requests-file = []
 rope = []
 scrapy = []
 scrapy-splash = []
+selenium = []
 service-identity = []
 six = []
+sniffio = []
+sortedcontainers = []
 textwrap3 = []
 tldextract = []
 toml = []
 tomli = []
+tqdm = []
+trio = []
+trio-websocket = []
 twisted = []
 twisted-iocpsupport = []
 typing-extensions = []
 ujson = []
 urllib3 = []
 w3lib = []
+webdriver-manager = []
 werkzeug = []
 whatthepatch = []
+wsproto = []
 yapf = []
 yarl = []
 zipp = []
