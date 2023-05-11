@@ -1,37 +1,30 @@
-import scrapy
-from scrapy.crawler import CrawlerProcess
-import scrapy_splash
-import scrapy_playwright
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+chrome_options = Options()
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+
+url = "https://www.coop.se/handla/varor/skafferi/pasta-pastasas/formpasta/pasta-farfalle-8076808060654"
+
+print("Starting search at url: " + url)
+
+driver = webdriver.Chrome(options=chrome_options)
+driver.get(url)
+
+## Finding Elements
+
+CookiesBtn = driver.find_element(By.ID, "cmpbntyestxt")
+
+CookiesBtn.click()
+
+Product_Button = driver.find_element(By.XPATH, "/html/body/main/div/div/div/div[2]/div/div/div[2]/div[1]/article/div/div[2]/div[3]/div/div[2]/div/div[1]/button")
+
+Product_Button.click()
 
 
-class Spider(scrapy.Spider):
-    ingredients = ""
-    name = "ICAScraper"
-    i = 0
-    productName = ""
+Product_Ingredients = driver.find_element(By.XPATH, "/html/body/main/div/div/div/div[2]/div/div/div[2]/div[1]/article/div/div[2]/div[3]/div/div[2]/div/div[2]/div/div/div/div[1]/div").text
 
-
-    def start_requests(self):
-        urls = [
-            "https://www.sj.se/kop-resa/valj-resa/Sunne/Karlstad%20C/2023-04-27"
-        ]
-        for url in urls:
-            print("Scraping URL")
-            yield scrapy.Request(url=url, meta={"playwright": True}, callback = self.on_response)
-
-    def on_response(self, response):
-        print(response.body)
-        name = response.xpath(
-            "/html/body/main/div/div/div/div[2]/div/div/div[2]/div[1]/article/div/div[2]/div[1]/div[1]/h1"
-        ).get()
-        print(name)
-
-
-c = CrawlerProcess({
-    'USER_AGENT': 'Mozilla/5.0',
-    'LOG_LEVEL': 'WARNING',
-    'REQUEST_FINGERPRINTER_IMPLEMENTATION': '2.7',
-})
-
-c.crawl(Spider)
-c.start()
+print(Product_Ingredients)

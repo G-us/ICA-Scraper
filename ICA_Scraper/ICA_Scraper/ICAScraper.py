@@ -151,11 +151,11 @@ class Spider(scrapy.Spider):
             window['-ALLERGENSTATUS-'].update(values['-KEYWORDS-'] + " free!", text_color='green')
             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
         else:
-            print(Fore.BLUE + "Result: " + Fore.RED + "Not Gluten Free")
+            print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
             print(Style.RESET_ALL)
             print("Here are the ingredients: " + ingredients)
             print(
-                "Here are the marked, potentially gluten containing ingredients: " +
+                "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
                 Fore.RED + convertTuple(re_SelectedKeyWords.findall(ingredients)) +
                 Style.RESET_ALL)
             window['-PRODUCTNAME-'].update(productName + " is ")
