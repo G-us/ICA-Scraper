@@ -52,9 +52,13 @@ def ResizeImage(image, size):
 layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Deez Nuts'), k='-KEYWORDS-', default_value='Gluten')],
           [sg.Text("Input Link", text_color='black')],
           [sg.Input(key='-INPUT-', do_not_clear=False)],
-          [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"), sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
-          [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'), sg.Image(key="-IMAGE-", pad=0)],
-          [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0), sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
+          [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
+           sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
+          [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
+           sg.Image(key="-IMAGE-", pad=0)],
+          [sg.Text(key="-ALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='red')],
+          [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
+           sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
 window = sg.Window('Gluten Free Checker', layout, font=TextFont)
 
@@ -161,6 +165,7 @@ class Spider(scrapy.Spider):
             window['-PRODUCTNAME-'].update(productName + " is ")
             window['-ALLERGENSTATUS-'].update("Not " + values['-KEYWORDS-'] + " free", text_color='red')
             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
+            window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(ingredients)))
 
 
 c = CrawlerProcess({
