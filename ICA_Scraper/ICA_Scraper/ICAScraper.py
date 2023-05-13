@@ -80,7 +80,7 @@ class Spider(scrapy.Spider):
     productName = ""
 
 
-    def start_requests(self):
+    def start_requests(self, InputURL):
       if InputURL == "":
         urls = ["https://handlaprivatkund.ica.se/stores/1004584/products/Normalsaltat-600g-Bregott/1268482"]
         
