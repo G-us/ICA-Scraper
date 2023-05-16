@@ -62,7 +62,7 @@ layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', d
           [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
            sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
-window = sg.Window('Gluten Free Checker', layout, font=TextFont)
+window = sg.Window('COOP', layout, font=TextFont)
 
 
 def convertTuple(tup):
