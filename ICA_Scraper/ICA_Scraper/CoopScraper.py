@@ -85,26 +85,14 @@ def getIngredients(InputURL):
     print(Product_Ingredients)
     print(Product_Name)
 
-    CheckForAllergens(Product_Ingredients, Product_Name)
+    return Product_Ingredients, Product_Name
 
 
-def CheckForAllergens(ingredients, name):
-    ingredients = str(ingredients).lower()
-
-    if re_SelectedKeyWords.search(ingredients):
-        detectedAllergens = re_SelectedKeyWords.findall(ingredients)
-        AllergenFree = False
-        PrintResult(ingredients, AllergenFree, name)
-    else:
-        detectedAllergens = re_SelectedKeyWords.findall(ingredients)
-        AllergenFree = True
-        PrintResult(ingredients, AllergenFree, name, detectedAllergens)
 
 
-def PrintResult(ingredients, AllergenFree, name, re_SelectedKeyWords, detectedAllergens):
-  dataSet["DetectedIngredients"] = detectedAllergens
+
+def PrintResult(ingredients, name):
   dataSet["Ingredients"] = ingredients
   dataSet["ProdutName"] = name
-  dataSet["AllergenStatus"] = AllergenFree
   print(dataSet)
   return dataSet

@@ -2,6 +2,26 @@
 import sys
 import PySimpleGUI as sg
 from CoopScraper import getIngredients
+import re
+
+dataSet = {
+  "AllergenStatus": False,
+  "Ingredients": "",
+  "DetectedAllergens": "",
+  "ProductTitle": ""
+}
+
+GlutenFreeKeyWords = [
+    "vete", "gluten", "råg", "korn", "kamut", "dinkel", "vetekli", "kruskakli", "spelt", "durum", "havregryn",
+    "mannagryn"
+]
+
+LactoseKeyWords = [
+    "mjölk", "mjölkprotein", "mjölkproteinhydrolysat", "mjölkproteinisolat", "mjölkproteinkoncentrat", "laktose", "grädde", "smör", "ost"
+]
+
+DeezNutsKeyWords = ["nöt", "jordnöt", "mandel", "cashewnöt", "hasselnöt", "valnöt", "pistagenöt", "pecannöt", "macadamianöt", "paranöt", "kastanjenöt"]
+re_SelectedKeyWords = []
 
 
 SubmitImage = b'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEN0lEQVRoge3YW4hVVRzH8c+a8VKaWg6Wgr2UURIS6tGJSEYjMiuDXgyjnrq+SChIZUgRdIHAqAyiG0UvaU9lkBdQCy+lM2NjPkZaLyppalpoOmf1sM9pduPsc87ex4EJ5vu0zjpr/X/7t9dl/9dimGGGGeb/RGg2wA7GXU5HpD0wLdIWacEpHAp0ldk6lyPNP242hY10Mgsr8ADG1Gl+IbK9hTdn81VRzVrkNrKTq0ezJrC08ubzELEr8tQcDuTVrkUuI13Mi6zDlH5/HY9sD/QEjpTpDUwMTI904Lq0VuRsYFmJD5q3kNCwkb3cj3WBy1LV3ZFXDrJhCX9n9e2kPbIyJNOwOooRL5Z4qdCT96MhI13MK7O5aqLyRp+ZzdpAuVGxLu6IfIxrK1URT5d4O++D96eukW4mlenRN51ORu6bw84igj9yzTm+xsxK1fleOtrZXSRelbqLtcwb+kycxeKiJmAGR3EXfqpUjWzlw05GFo1JHSOdzAosTVU9W2JHM4JQ4lhkib51NR2PNhOz3oisqG6xkR9+Zm0zYmnmsC/wTqpq+Qv5t/N/yVwjB7jibDINxlQaPjib9UWFBqIzmbIHMRqxzO1z2VUkVuYbOMd8fSZOHOWLIgK1KHE4srnyM7SwqGisTCO9tFfLZb69h3NFRepQNSKmNPOSaSQwLVXuKSpQj8j+gTTzUstIW7VcTtbKoBD/mxVPVDCRzTSSTggDvUWCN0JvKjOItMSCcWptd6dSjdpqtGuKUanYgT9CkrbkptbUOlQtl5MP1mBxU6p8sGiQWka6Uz874iU4TWawIFXuzmxVh1prZGusrI3A1H3MKyqSxSbGhuR4oKKzpWisTCMlDge+qWqUWVlUJIs2HotcVfn52/jBMAKRt/Qtvnu7m/jy9mcPk7E6pfXeDU18dGsaKfFloglCLx99x9SiYlW2MSLwqb4d69h51jQTs6aRQGzhSZU3FZg8go2dF5/ZG2YbI8bxSeDOlM6q2/i9aEwaSJtnJenJCn1T7Gbs7uLWvGKdTBmfnA4fSteXeXwfV+aNl6bhLbWLlyPPVftELgTex2slfq3Vt3IkeCLyfEjSkIHY08rCmZxs+OlT5Po27E12rlcDranq89iKzWX2j+LwBXojbdXroMBiTGhAorCZ3B+5vcyvjETRTPUEVkmOugsG+L+QmdxHyzlsP82MwHL8kqPricjrLdxY4t2RyShtG6Dd3F425V0zTaUd62m9PklfFkkORdMwIdISOB0rl9iBLZGNJf5K9+9h7Hk2uAQjc8nzp/W0TiIs4EIj7Tcxti3DTGTPGRYuaMDMYCWCubgUZoaEEZo3M2SMUHfNfH+au7PMFL4QGwxu4c/j2btZ+ziWZfUdUiNSZaBpFvmsxMNZ9wdDakSqLLx4ZD4/wyODeQkyqPQwtpPVzd7UDzPMMMMMPf4BTrogPAcmKlcAAAAASUVORK5CYII='
@@ -26,22 +46,46 @@ layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', d
 
 window = sg.Window("Select Website", layout, auto_size_buttons=False, default_button_element_size=(12,1), use_default_focus=False, finalize=True)
 
+def CheckForAllergens(ingredients, name):
+    ingredients = str(ingredients).lower()
+    print("checking")
+
+    if re_SelectedKeyWords.search(ingredients):
+        detectedAllergens = re_SelectedKeyWords.findall(ingredients)
+        dataSet["Ingredients"] = ingredients
+        dataSet["ProductTitle"] = name
+        dataSet["AllergenStatus"] = True
+        dataSet["DetectedAllergens"] = detectedAllergens
+    else:
+        detectedAllergens = re_SelectedKeyWords.findall(ingredients)
+        dataSet["Ingredients"] = ingredients
+        dataSet["ProductTitle"] = name
+        dataSet["AllergenStatus"] = False
+        dataSet["DetectedAllergens"] = detectedAllergens
+
 
 while True:
     event, values = window.read(timeout=100)
     InputURL = values["-INPUT-"]
     if event == sg.WINDOW_CLOSED:
         break
-      
     if event == "-SUBMIT-":
       if "ica.se" in InputURL:
-          
           print("ICA selected")
           window.close()
       if "coop.se" in InputURL:
           getIngredients(InputURL)
           print("Coop selected")
           window.close()
+      if values["-KEYWORDS-"] == "Gluten":
+        re_SelectedKeyWords = re.compile("|".join(GlutenFreeKeyWords))
+        AllergenFree = False
+      elif values["-KEYWORDS-"] == "Lactose":
+        re_SelectedKeyWords = re.compile("|".join(LactoseKeyWords))
+        AllergenFree = False
+      elif values["-KEYWORDS-"] == "Deez Nuts":
+        re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
       if InputURL == "":
         InputURL = "https://www.coop.se/handla/varor/skafferi/pasta-pastasas/formpasta/pasta-farfalle-8076808060654"
-        getIngredients(InputURL)
+        CheckForAllergens(getIngredients(InputURL)[0], getIngredients(InputURL)[1])
+        print(dataSet)
