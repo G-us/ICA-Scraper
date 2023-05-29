@@ -69,30 +69,20 @@ def getIngredients(InputURL):
     driver.get(url)
     driver.delete_all_cookies()
     ## Finding Elements
-    WebDriverWait(driver, 500).until(element_to_be_clickable((By.ID, "cmpbntyestxt")))
+    WebDriverWait(driver, 10).until(element_to_be_clickable((By.ID, "cmpbntyestxt")))
     CookiesBtn = driver.find_element(By.ID, "cmpbntyestxt")
     CookiesBtn.click()
-    WebDriverWait(driver, 500).until(element_to_be_clickable((By.CSS_SELECTOR,
+    WebDriverWait(driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR,
                                                              "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")))
     Product_Button = driver.find_element(By.CSS_SELECTOR,
                                          "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")
     Product_Button.click()
-    WebDriverWait(driver, 500).until(visibility_of_element_located((By.CSS_SELECTOR,
-                                                                   "#Produktfakta > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)")))
-    Product_Ingredients = driver.find_element(By.CSS_SELECTOR,
-                                              "#Produktfakta > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)").text
+    WebDriverWait(driver, 10).until(visibility_of_element_located((By.ID, "Produktfakta")))
+    Product_Ingredients = driver.find_element(By.ID,
+                                              "Produktfakta").text
     Product_Name = driver.find_element(By.CLASS_NAME, "ItemInfo-heading").text
     print(Product_Ingredients)
     print(Product_Name)
 
     return Product_Ingredients, Product_Name
 
-
-
-
-
-def PrintResult(ingredients, name):
-  dataSet["Ingredients"] = ingredients
-  dataSet["ProdutName"] = name
-  print(dataSet)
-  return dataSet
