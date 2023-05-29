@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import PySimpleGUI as sg
+from CoopScraper import getIngredients
 
 
 SubmitImage = b'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEN0lEQVRoge3YW4hVVRzH8c+a8VKaWg6Wgr2UURIS6tGJSEYjMiuDXgyjnrq+SChIZUgRdIHAqAyiG0UvaU9lkBdQCy+lM2NjPkZaLyppalpoOmf1sM9pduPsc87ex4EJ5vu0zjpr/X/7t9dl/9dimGGGGeb/RGg2wA7GXU5HpD0wLdIWacEpHAp0ldk6lyPNP242hY10Mgsr8ADG1Gl+IbK9hTdn81VRzVrkNrKTq0ezJrC08ubzELEr8tQcDuTVrkUuI13Mi6zDlH5/HY9sD/QEjpTpDUwMTI904Lq0VuRsYFmJD5q3kNCwkb3cj3WBy1LV3ZFXDrJhCX9n9e2kPbIyJNOwOooRL5Z4qdCT96MhI13MK7O5aqLyRp+ZzdpAuVGxLu6IfIxrK1URT5d4O++D96eukW4mlenRN51ORu6bw84igj9yzTm+xsxK1fleOtrZXSRelbqLtcwb+kycxeKiJmAGR3EXfqpUjWzlw05GFo1JHSOdzAosTVU9W2JHM4JQ4lhkib51NR2PNhOz3oisqG6xkR9+Zm0zYmnmsC/wTqpq+Qv5t/N/yVwjB7jibDINxlQaPjib9UWFBqIzmbIHMRqxzO1z2VUkVuYbOMd8fSZOHOWLIgK1KHE4srnyM7SwqGisTCO9tFfLZb69h3NFRepQNSKmNPOSaSQwLVXuKSpQj8j+gTTzUstIW7VcTtbKoBD/mxVPVDCRzTSSTggDvUWCN0JvKjOItMSCcWptd6dSjdpqtGuKUanYgT9CkrbkptbUOlQtl5MP1mBxU6p8sGiQWka6Uz874iU4TWawIFXuzmxVh1prZGusrI3A1H3MKyqSxSbGhuR4oKKzpWisTCMlDge+qWqUWVlUJIs2HotcVfn52/jBMAKRt/Qtvnu7m/jy9mcPk7E6pfXeDU18dGsaKfFloglCLx99x9SiYlW2MSLwqb4d69h51jQTs6aRQGzhSZU3FZg8go2dF5/ZG2YbI8bxSeDOlM6q2/i9aEwaSJtnJenJCn1T7Gbs7uLWvGKdTBmfnA4fSteXeXwfV+aNl6bhLbWLlyPPVftELgTex2slfq3Vt3IkeCLyfEjSkIHY08rCmZxs+OlT5Po27E12rlcDranq89iKzWX2j+LwBXojbdXroMBiTGhAorCZ3B+5vcyvjETRTPUEVkmOugsG+L+QmdxHyzlsP82MwHL8kqPricjrLdxY4t2RyShtG6Dd3F425V0zTaUd62m9PklfFkkORdMwIdISOB0rl9iBLZGNJf5K9+9h7Hk2uAQjc8nzp/W0TiIs4EIj7Tcxti3DTGTPGRYuaMDMYCWCubgUZoaEEZo3M2SMUHfNfH+au7PMFL4QGwxu4c/j2btZ+ziWZfUdUiNSZaBpFvmsxMNZ9wdDakSqLLx4ZD4/wyODeQkyqPQwtpPVzd7UDzPMMMMMPf4BTrogPAcmKlcAAAAASUVORK5CYII='
@@ -13,7 +14,7 @@ ImgSize = (50, 50)
 
 layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', default_value='Gluten')],
           [sg.Text("Input Link", text_color='black')],
-          [sg.Input(key='-INPUT-', do_not_clear=False)],
+          [sg.Input(key='-INPUT-', do_not_clear=True)],
           [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
            sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
           [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
@@ -31,12 +32,16 @@ while True:
     InputURL = values["-INPUT-"]
     if event == sg.WINDOW_CLOSED:
         break
-    if event == 'ICA':
-        import ICAScraper
-        print("ICA selected")
-        window.close()
-    if "coop.se" in InputURL:
-        from CoopScraper import getIngredients
+      
+    if event == "-SUBMIT-":
+      if "ica.se" in InputURL:
+          
+          print("ICA selected")
+          window.close()
+      if "coop.se" in InputURL:
+          getIngredients(InputURL)
+          print("Coop selected")
+          window.close()
+      if InputURL == "":
+        InputURL = "https://www.coop.se/handla/varor/skafferi/pasta-pastasas/formpasta/pasta-farfalle-8076808060654"
         getIngredients(InputURL)
-        print("Coop selected")
-        window.close()
