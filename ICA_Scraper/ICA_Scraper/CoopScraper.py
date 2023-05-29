@@ -1,10 +1,5 @@
-import re
-import sys
 import time
 
-import PySimpleGUI as sg
-import textwrap3
-from colorama import Fore, Style
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -22,14 +17,14 @@ LactoseKeyWords = [
 ]
 
 NutsKeyWords = ["nöt", "jordnöt", "mandel", "cashewnöt", "hasselnöt", "valnöt", "pistagenöt", "pecannöt",
-                    "macadamianöt", "paranöt", "kastanjenöt"]
+                "macadamianöt", "paranöt", "kastanjenöt"]
 re_SelectedKeyWords = []
 
 dataSet = {
-  "AllergenStatus": False,
-  "Ingredients": "",
-  "DetectedAllergens": "",
-  "ProductTitle": ""
+    "AllergenStatus": False,
+    "Ingredients": "",
+    "DetectedAllergens": "",
+    "ProductTitle": ""
 }
 
 Product_Ingredients = ""
@@ -37,9 +32,7 @@ Product_Name = ""
 
 chrome_options = Options()
 
-
-chrome_options.add_argument("--no-sandbox") 
-
+chrome_options.add_argument("--no-sandbox")
 
 
 def convertTuple(tup):
@@ -68,21 +61,18 @@ def getIngredients(InputURL):
     print("Starting search at url: " + url)
     driver.get(url)
     driver.delete_all_cookies()
-    ## Finding Elements
+    # Finding Elements
     WebDriverWait(driver, 10).until(element_to_be_clickable((By.ID, "cmpbntyestxt")))
     CookiesBtn = driver.find_element(By.ID, "cmpbntyestxt")
     CookiesBtn.click()
-    WebDriverWait(driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR,
-                                                             "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")))
-    Product_Button = driver.find_element(By.CSS_SELECTOR,
-                                         "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")
+    WebDriverWait(driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")))
+    Product_Button = driver.find_element(By.CSS_SELECTOR, "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")
     Product_Button.click()
     WebDriverWait(driver, 10).until(visibility_of_element_located((By.ID, "Produktfakta")))
-    Product_Ingredients = driver.find_element(By.ID,
-                                              "Produktfakta").text
+    Product_Ingredients = driver.find_element(By.XPATH,
+                                              "id('u-marginBxxsm')//div").text
     Product_Name = driver.find_element(By.CLASS_NAME, "ItemInfo-heading").text
     print(Product_Ingredients)
     print(Product_Name)
 
     return Product_Ingredients, Product_Name
-
