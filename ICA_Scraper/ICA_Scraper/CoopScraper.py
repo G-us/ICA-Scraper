@@ -65,12 +65,12 @@ def getIngredients(InputURL):
     WebDriverWait(driver, 10).until(element_to_be_clickable((By.ID, "cmpbntyestxt")))
     CookiesBtn = driver.find_element(By.ID, "cmpbntyestxt")
     CookiesBtn.click()
-    WebDriverWait(driver, 10).until(element_to_be_clickable((By.CSS_SELECTOR, "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")))
-    Product_Button = driver.find_element(By.CSS_SELECTOR, "body > main > div > div > div > div.Grid-cell.Grid-cell--grownWidth > div > div > div.Grid > div.Grid-cell.u-marginBxlg > article > div > div.ItemInfo-details > div:nth-child(3) > div > div:nth-child(2) > div > div.w7Fswr5F > button")
+    WebDriverWait(driver, 10).until(element_to_be_clickable((By.XPATH, "//*[contains(text(), 'Produktfakta')]")))
+    Product_Button = driver.find_element(By.XPATH, "//*[contains(text(), 'Produktfakta')]")
     Product_Button.click()
     WebDriverWait(driver, 10).until(visibility_of_element_located((By.ID, "Produktfakta")))
     Product_Ingredients = driver.find_element(By.XPATH,
-                                              "id('u-marginBxxsm')//div").text
+                                              "//*[@id='Produktfakta']/div/div[1]/div").text
     Product_Name = driver.find_element(By.CLASS_NAME, "ItemInfo-heading").text
     print(Product_Ingredients)
     print(Product_Name)

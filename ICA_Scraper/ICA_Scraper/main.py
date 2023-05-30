@@ -90,7 +90,7 @@ while True:
         elif values["-KEYWORDS-"] == "Deez Nuts":
             re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
         if InputURL == "":
-            InputURL = "https://www.coop.se/handla/varor/skafferi/pasta-pastasas/formpasta/pasta-farfalle-8076808060654"
+            InputURL = "https://www.coop.se/handla/varor/mejeri-agg/yoghurt-fil/smaksatt-yoghurt/yoghurt-vanilj-passionsfrukt-6408432203411"
             print("No input")
             ingredients, name = getIngredients(InputURL)
             CheckForAllergens(ingredients, name)
