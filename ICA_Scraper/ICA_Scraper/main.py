@@ -63,14 +63,14 @@ def CheckForAllergens(ingredients, name):
 
     if re_SelectedKeyWords.search(ingredients):
         detectedAllergens = re_SelectedKeyWords.findall(ingredients)
-        dataSet["Ingredients"] = ingredients
+        dataSet["Ingredients"] = textwrap3.fill(ingredients, WrapSize)
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = True
         dataSet["DetectedAllergens"] = detectedAllergens
         PrintResult()
     else:
         detectedAllergens = re_SelectedKeyWords.findall(ingredients)
-        dataSet["Ingredients"] = ingredients
+        dataSet["Ingredients"] = textwrap3.fill(ingredients, WrapSize)
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = False
         dataSet["DetectedAllergens"] = detectedAllergens
@@ -94,9 +94,9 @@ def PrintResult():
                 Fore.RED + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])) +
                 Style.RESET_ALL)
             window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
-            window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='red')
+            window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='DarkRed')
             window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
-            window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])))
+            window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])), text_color="DarkRed")
 
 while True:
     event, values = window.read(timeout=100)
