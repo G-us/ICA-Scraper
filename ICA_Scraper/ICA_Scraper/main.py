@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import sys
 import PySimpleGUI as sg
-from CoopScraper import getIngredients
+from CoopScraper import SearchCOOP
 import re
+from ICAScraper import SearchICA
 
 dataSet = {
     "AllergenStatus": False,
@@ -65,6 +66,27 @@ def CheckForAllergens(ingredients, name):
         dataSet["AllergenStatus"] = False
         dataSet["DetectedAllergens"] = detectedAllergens
 
+# def PrintResult(self, ingredients, AllergenFree):
+#         print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + productName + Style.RESET_ALL)
+#         if AllergenFree:
+#             print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
+#             print(Style.RESET_ALL)
+#             print("Just to make sure, here are the ingredients: " + ingredients)
+#             window['-PRODUCTNAME-'].update(productName + " is ")
+#             window['-ALLERGENSTATUS-'].update(values['-KEYWORDS-'] + " free!", text_color='green')
+#             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
+#         else:
+#             print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
+#             print(Style.RESET_ALL)
+#             print("Here are the ingredients: " + ingredients)
+#             print(
+#                 "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
+#                 Fore.RED + convertTuple(re_SelectedKeyWords.findall(ingredients)) +
+#                 Style.RESET_ALL)
+#             window['-PRODUCTNAME-'].update(productName + " is ")
+#             window['-ALLERGENSTATUS-'].update("Not " + values['-KEYWORDS-'] + " free", text_color='red')
+#             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
+#             window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(ingredients)))
 
 while True:
     event, values = window.read(timeout=100)
@@ -73,10 +95,13 @@ while True:
         break
     if event == "-SUBMIT-":
         if "ica.se" in InputURL:
+            ingredients, name = SearchICA(InputURL)
+            CheckForAllergens(ingredients, name)
+            print(dataSet)
             print("ICA selected")
             window.close()
         if "coop.se" in InputURL:
-            ingredients, name = getIngredients(InputURL)
+            ingredients, name = SearchCOOP(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)
             print("Coop selected")
@@ -90,8 +115,8 @@ while True:
         elif values["-KEYWORDS-"] == "Deez Nuts":
             re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
         if InputURL == "":
-            InputURL = "https://www.coop.se/handla/varor/mejeri-agg/yoghurt-fil/smaksatt-yoghurt/yoghurt-vanilj-passionsfrukt-6408432203411"
+            InputURL = "https://handlaprivatkund.ica.se/stores/1004584/products/Gr%C3%B6tbr%C3%B6d-780g-P%C3%A5gen/2044679"
             print("No input")
-            ingredients, name = getIngredients(InputURL)
+            ingredients, name = SearchICA(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)

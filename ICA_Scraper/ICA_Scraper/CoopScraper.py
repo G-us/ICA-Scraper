@@ -43,15 +43,7 @@ def convertTuple(tup):
     return str
 
 
-def getImage(driver):
-    driver.execute_script("window.scrollTo(0,document.body.scrollHeight);")
-    time.sleep(5)
-    with open('DownloadedImages/ProductImage.png', 'wb') as file:
-        I = driver.find_element(By.CLASS_NAME, "ZDGqWGZP")
-        file.write(I.screenshot_as_png)
-
-
-def getIngredients(InputURL):
+def SearchCOOP(InputURL):
     driver = webdriver.Chrome(options=chrome_options)
     if InputURL == "":
         url = "https://www.coop.se/handla/varor/mejeri-agg/mellanmal-dessert/kylda-smamal/risifrutti-jordgubb-7310090771623"
