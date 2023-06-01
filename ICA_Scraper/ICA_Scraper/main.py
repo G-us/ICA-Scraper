@@ -4,6 +4,8 @@ import PySimpleGUI as sg
 from CoopScraper import SearchCOOP
 import re
 from ICAScraper import SearchICA
+import textwrap3
+from colorama import Fore, Style
 
 dataSet = {
     "AllergenStatus": False,
@@ -46,8 +48,14 @@ layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', d
            sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
 window = sg.Window("Select Website", layout, auto_size_buttons=False, default_button_element_size=(12, 1),
-                   use_default_focus=False, finalize=True)
+                   use_default_focus=False, finalize=False)
 
+def convertTuple(tup):
+    # initialize an empty string
+    str = ''
+    for item in tup:
+        str = str + item + ", "
+    return str
 
 def CheckForAllergens(ingredients, name):
     ingredients = str(ingredients).lower()
@@ -59,34 +67,36 @@ def CheckForAllergens(ingredients, name):
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = True
         dataSet["DetectedAllergens"] = detectedAllergens
+        PrintResult()
     else:
         detectedAllergens = re_SelectedKeyWords.findall(ingredients)
         dataSet["Ingredients"] = ingredients
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = False
         dataSet["DetectedAllergens"] = detectedAllergens
+        PrintResult()
 
-# def PrintResult(self, ingredients, AllergenFree):
-#         print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + productName + Style.RESET_ALL)
-#         if AllergenFree:
-#             print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
-#             print(Style.RESET_ALL)
-#             print("Just to make sure, here are the ingredients: " + ingredients)
-#             window['-PRODUCTNAME-'].update(productName + " is ")
-#             window['-ALLERGENSTATUS-'].update(values['-KEYWORDS-'] + " free!", text_color='green')
-#             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
-#         else:
-#             print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
-#             print(Style.RESET_ALL)
-#             print("Here are the ingredients: " + ingredients)
-#             print(
-#                 "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
-#                 Fore.RED + convertTuple(re_SelectedKeyWords.findall(ingredients)) +
-#                 Style.RESET_ALL)
-#             window['-PRODUCTNAME-'].update(productName + " is ")
-#             window['-ALLERGENSTATUS-'].update("Not " + values['-KEYWORDS-'] + " free", text_color='red')
-#             window['-INGREDIENTS-'].update("Ingredients: " + ingredients)
-#             window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(ingredients)))
+def PrintResult():
+        print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + dataSet["ProductTitle"] + Style.RESET_ALL)
+        if dataSet["AllergenStatus"] == False:
+            print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
+            print(Style.RESET_ALL)
+            print("Just to make sure, here are the ingredients: " + dataSet["Ingredients"])
+            window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
+            window['-ALLERGENSTATUS-'].update(values['-KEYWORDS-'] + " free!", text_color='green')
+            window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+        else:
+            print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
+            print(Style.RESET_ALL)
+            print("Here are the ingredients: " + dataSet["Ingredients"])
+            print(
+                "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
+                Fore.RED + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])) +
+                Style.RESET_ALL)
+            window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
+            window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='red')
+            window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+            window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])))
 
 while True:
     event, values = window.read(timeout=100)
@@ -115,8 +125,8 @@ while True:
         elif values["-KEYWORDS-"] == "Deez Nuts":
             re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
         if InputURL == "":
-            InputURL = "https://handlaprivatkund.ica.se/stores/1004584/products/Gr%C3%B6tbr%C3%B6d-780g-P%C3%A5gen/2044679"
+            InputURL = "https://www.coop.se/handla/varor/brod-bageri/ostkex-majskakor-tilltugg/majskakor-riskakor/majskakor-graddfil-lok-7340011469773"
             print("No input")
-            ingredients, name = SearchICA(InputURL)
+            ingredients, name = SearchCOOP(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)

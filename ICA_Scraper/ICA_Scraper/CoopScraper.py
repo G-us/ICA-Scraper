@@ -6,19 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import element_to_be_clickable, visibility_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
-GlutenFreeKeyWords = [
-    "vete", "gluten", "råg", "korn", "kamut", "dinkel", "vetekli", "kruskakli", "spelt", "durum", "havregryn",
-    "mannagryn"
-]
-
-LactoseKeyWords = [
-    "mjölk", "mjölkprotein", "mjölkproteinhydrolysat", "mjölkproteinisolat", "mjölkproteinkoncentrat", "laktose",
-    "grädde", "smör", "ost"
-]
-
-NutsKeyWords = ["nöt", "jordnöt", "mandel", "cashewnöt", "hasselnöt", "valnöt", "pistagenöt", "pecannöt",
-                "macadamianöt", "paranöt", "kastanjenöt"]
-re_SelectedKeyWords = []
 
 dataSet = {
     "AllergenStatus": False,

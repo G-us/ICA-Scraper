@@ -8,18 +8,6 @@ import selenium
 
 from PIL import Image
 
-GlutenFreeKeyWords = [
-    "vete", "gluten", "råg", "korn", "kamut", "dinkel", "vetekli", "kruskakli", "spelt", "durum", "havregryn",
-    "mannagryn"
-]
-
-LactoseKeyWords = [
-    "mjölk", "mjölkprotein", "mjölkproteinhydrolysat", "mjölkproteinisolat", "mjölkproteinkoncentrat", "laktose", "grädde", "smör", "ost"
-]
-
-DeezNutsKeyWords = ["nöt", "jordnöt", "mandel", "cashewnöt", "hasselnöt", "valnöt", "pistagenöt", "pecannöt", "macadamianöt", "paranöt", "kastanjenöt"]
-re_SelectedKeyWords = []
-
 
 chrome_options = Options()
 
