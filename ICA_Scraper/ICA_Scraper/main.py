@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import PySimpleGUI as sg
 from CoopScraper import SearchCOOP
 import re
@@ -26,6 +25,8 @@ LactoseKeyWords = [
 
 DeezNutsKeyWords = ["nöt", "jordnöt", "mandel", "cashewnöt", "hasselnöt", "valnöt", "pistagenöt", "pecannöt",
                     "macadamianöt", "paranöt", "kastanjenöt"]
+
+customKeyWords = []
 re_SelectedKeyWords = []
 
 SubmitImage = b'iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEN0lEQVRoge3YW4hVVRzH8c+a8VKaWg6Wgr2UURIS6tGJSEYjMiuDXgyjnrq+SChIZUgRdIHAqAyiG0UvaU9lkBdQCy+lM2NjPkZaLyppalpoOmf1sM9pduPsc87ex4EJ5vu0zjpr/X/7t9dl/9dimGGGGeb/RGg2wA7GXU5HpD0wLdIWacEpHAp0ldk6lyPNP242hY10Mgsr8ADG1Gl+IbK9hTdn81VRzVrkNrKTq0ezJrC08ubzELEr8tQcDuTVrkUuI13Mi6zDlH5/HY9sD/QEjpTpDUwMTI904Lq0VuRsYFmJD5q3kNCwkb3cj3WBy1LV3ZFXDrJhCX9n9e2kPbIyJNOwOooRL5Z4qdCT96MhI13MK7O5aqLyRp+ZzdpAuVGxLu6IfIxrK1URT5d4O++D96eukW4mlenRN51ORu6bw84igj9yzTm+xsxK1fleOtrZXSRelbqLtcwb+kycxeKiJmAGR3EXfqpUjWzlw05GFo1JHSOdzAosTVU9W2JHM4JQ4lhkib51NR2PNhOz3oisqG6xkR9+Zm0zYmnmsC/wTqpq+Qv5t/N/yVwjB7jibDINxlQaPjib9UWFBqIzmbIHMRqxzO1z2VUkVuYbOMd8fSZOHOWLIgK1KHE4srnyM7SwqGisTCO9tFfLZb69h3NFRepQNSKmNPOSaSQwLVXuKSpQj8j+gTTzUstIW7VcTtbKoBD/mxVPVDCRzTSSTggDvUWCN0JvKjOItMSCcWptd6dSjdpqtGuKUanYgT9CkrbkptbUOlQtl5MP1mBxU6p8sGiQWka6Uz874iU4TWawIFXuzmxVh1prZGusrI3A1H3MKyqSxSbGhuR4oKKzpWisTCMlDge+qWqUWVlUJIs2HotcVfn52/jBMAKRt/Qtvnu7m/jy9mcPk7E6pfXeDU18dGsaKfFloglCLx99x9SiYlW2MSLwqb4d69h51jQTs6aRQGzhSZU3FZg8go2dF5/ZG2YbI8bxSeDOlM6q2/i9aEwaSJtnJenJCn1T7Gbs7uLWvGKdTBmfnA4fSteXeXwfV+aNl6bhLbWLlyPPVftELgTex2slfq3Vt3IkeCLyfEjSkIHY08rCmZxs+OlT5Po27E12rlcDranq89iKzWX2j+LwBXojbdXroMBiTGhAorCZ3B+5vcyvjETRTPUEVkmOugsG+L+QmdxHyzlsP82MwHL8kqPricjrLdxY4t2RyShtG6Dd3F425V0zTaUd62m9PklfFkkORdMwIdISOB0rl9iBLZGNJf5K9+9h7Hk2uAQjc8nzp/W0TiIs4EIj7Tcxti3DTGTPGRYuaMDMYCWCubgUZoaEEZo3M2SMUHfNfH+au7PMFL4QGwxu4c/j2btZ+ziWZfUdUiNSZaBpFvmsxMNZ9wdDakSqLLx4ZD4/wyODeQkyqPQwtpPVzd7UDzPMMMMMPf4BTrogPAcmKlcAAAAASUVORK5CYII='
@@ -36,9 +37,9 @@ IngredientsFont = ("Noto Sans", 12)
 WrapSize = 70
 ImgSize = (50, 50)
 
-layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', default_value='Gluten')],
+layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts', "Custom Allergens"), k='-KEYWORDS-', default_value='Gluten'), sg.Input(key='-CUSWORDS-', do_not_clear=True, visible=False, expand_x=True)],
           [sg.Text("Input Link", text_color='black')],
-          [sg.Input(key='-INPUT-', do_not_clear=True)],
+          [sg.Input(key='-INPUT-', do_not_clear=True, size=(50, 50))],
           [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
            sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
           [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
@@ -47,8 +48,7 @@ layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts'), k='-KEYWORDS-', d
           [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
            sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
-window = sg.Window("Select Website", layout, auto_size_buttons=False, default_button_element_size=(12, 1),
-                   use_default_focus=False, finalize=False)
+window = sg.Window("SafeBites", layout, auto_size_buttons=False, default_button_element_size=(12, 1), use_default_focus=False, finalize=False)
 
 def convertTuple(tup):
     # initialize an empty string
@@ -83,7 +83,7 @@ def PrintResult():
             print(Style.RESET_ALL)
             print("Just to make sure, here are the ingredients: " + dataSet["Ingredients"])
             window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
-            window['-ALLERGENSTATUS-'].update(values['-KEYWORDS-'] + " free!", text_color='green')
+            window['-ALLERGENSTATUS-'].update((values['-KEYWORDS-'].lower()) + " free!", text_color='green')
             window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
         else:
             print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
@@ -101,6 +101,10 @@ def PrintResult():
 while True:
     event, values = window.read(timeout=100)
     InputURL = values["-INPUT-"]
+    if values["-KEYWORDS-"] == "Custom Allergens":
+          window["-CUSWORDS-"].update(visible=True)
+    else:
+          window["-CUSWORDS-"].update(visible=False)
     if event == sg.WINDOW_CLOSED or event == "-EXIT-":
         break
     if event == "-SUBMIT-":
@@ -122,8 +126,14 @@ while True:
         elif values["-KEYWORDS-"] == "Lactose":
             re_SelectedKeyWords = re.compile("|".join(LactoseKeyWords))
             AllergenFree = False
-        elif values["-KEYWORDS-"] == "Deez Nuts":
+        elif values["-KEYWORDS-"] == "Nuts":
             re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
+        elif values["-KEYWORDS-"] == "Custom Allergens":
+          customAllergens = values["-CUSWORDS-"].split(',')
+          customAllergens = [x.strip(' ') for x in customAllergens]
+          customAllergens = [x.lower() for x in customAllergens]
+          re_SelectedKeyWords = re.compile("|".join(customAllergens))
+          print(re_SelectedKeyWords)
         if InputURL == "":
             InputURL = "https://www.coop.se/handla/varor/brod-bageri/ostkex-majskakor-tilltugg/majskakor-riskakor/majskakor-graddfil-lok-7340011469773"
             print("No input")
