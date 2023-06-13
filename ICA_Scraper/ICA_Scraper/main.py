@@ -91,6 +91,7 @@ def PrintResult():
         window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
         window['-ALLERGENSTATUS-'].update((values['-KEYWORDS-'].lower()) + " free!", text_color='green')
         window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+        window['-ALLERGENS-'].update("")
     else:
         print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
         print(Style.RESET_ALL)
