@@ -37,18 +37,22 @@ IngredientsFont = ("Noto Sans", 12)
 WrapSize = 70
 ImgSize = (50, 50)
 
-layout = [[sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts', "Custom Allergens"), k='-KEYWORDS-', default_value='Gluten'), sg.Input(key='-CUSWORDS-', do_not_clear=True, visible=False, expand_x=True)],
-          [sg.Text("Input Link", text_color='black')],
-          [sg.Input(key='-INPUT-', do_not_clear=True, size=(50, 50))],
-          [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
-           sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
-          [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
-           sg.Image(key="-IMAGE-", pad=0)],
-          [sg.Text(key="-ALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='red')],
-          [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
-           sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
+layout = [
+    [sg.OptionMenu(values=('Gluten', 'Lactose', 'Nuts', "Custom Allergens"), k='-KEYWORDS-', default_value='Gluten'),
+     sg.Input(key='-CUSWORDS-', do_not_clear=True, visible=False, expand_x=True)],
+    [sg.Text("Input Link", text_color='black')],
+    [sg.Input(key='-INPUT-', do_not_clear=True, size=(50, 50), focus=True)],
+    [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
+     sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
+    [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
+     sg.Image(key="-IMAGE-", pad=0)],
+    [sg.Text(key="-ALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='red')],
+    [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
+     sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
-window = sg.Window("SafeBites", layout, auto_size_buttons=False, default_button_element_size=(12, 1), use_default_focus=False, finalize=False)
+window = sg.Window("SafeBites", layout, auto_size_buttons=False, default_button_element_size=(12, 1),
+                   use_default_focus=False, finalize=False)
+
 
 def convertTuple(tup):
     # initialize an empty string
@@ -56,6 +60,7 @@ def convertTuple(tup):
     for item in tup:
         str = str + item + ", "
     return str
+
 
 def CheckForAllergens(ingredients, name):
     ingredients = str(ingredients).lower()
@@ -76,64 +81,70 @@ def CheckForAllergens(ingredients, name):
         dataSet["DetectedAllergens"] = detectedAllergens
         PrintResult()
 
+
 def PrintResult():
-        print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + dataSet["ProductTitle"] + Style.RESET_ALL)
-        if dataSet["AllergenStatus"] == False:
-            print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
-            print(Style.RESET_ALL)
-            print("Just to make sure, here are the ingredients: " + dataSet["Ingredients"])
-            window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
-            window['-ALLERGENSTATUS-'].update((values['-KEYWORDS-'].lower()) + " free!", text_color='green')
-            window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
-        else:
-            print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
-            print(Style.RESET_ALL)
-            print("Here are the ingredients: " + dataSet["Ingredients"])
-            print(
-                "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
-                Fore.RED + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])) +
-                Style.RESET_ALL)
-            window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
-            window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='DarkRed')
-            window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
-            window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])), text_color="DarkRed")
+    print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + dataSet["ProductTitle"] + Style.RESET_ALL)
+    if dataSet["AllergenStatus"] == False:
+        print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
+        print(Style.RESET_ALL)
+        print("Just to make sure, here are the ingredients: " + dataSet["Ingredients"])
+        window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
+        window['-ALLERGENSTATUS-'].update((values['-KEYWORDS-'].lower()) + " free!", text_color='green')
+        window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+    else:
+        print(Fore.BLUE + "Result: " + Fore.RED + "Not " + (values['-KEYWORDS-'].lower()) + " Free")
+        print(Style.RESET_ALL)
+        print("Here are the ingredients: " + dataSet["Ingredients"])
+        print(
+            "Here are the marked, potentially " + (values['-KEYWORDS-'].lower()) + " containing ingredients: " +
+            Fore.RED + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])) +
+            Style.RESET_ALL)
+        window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
+        window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='DarkRed')
+        window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+        window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])),
+                                     text_color="DarkRed")
+
 
 while True:
     event, values = window.read(timeout=100)
     InputURL = values["-INPUT-"]
     if values["-KEYWORDS-"] == "Custom Allergens":
-          window["-CUSWORDS-"].update(visible=True)
+        window["-CUSWORDS-"].update(visible=True)
     else:
-          window["-CUSWORDS-"].update(visible=False)
+        window["-CUSWORDS-"].update(visible=False)
     if event == sg.WINDOW_CLOSED or event == "-EXIT-":
         break
     if event == "-SUBMIT-":
+        if values["-KEYWORDS-"] == "Gluten":
+            re_SelectedKeyWords = re.compile("|".join(GlutenFreeKeyWords))
+            AllergenFree = False
+            print("Gluten selected")
+        elif values["-KEYWORDS-"] == "Lactose":
+            re_SelectedKeyWords = re.compile("|".join(LactoseKeyWords))
+            AllergenFree = False
+            print("Lactose selected")
+        elif values["-KEYWORDS-"] == "Nuts":
+            re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
+            AllergenFree = False
+            print("Nuts selected")
+        elif values["-KEYWORDS-"] == "Custom Allergens":
+            customAllergens = values["-CUSWORDS-"].split(',')
+            customAllergens = [x.strip(' ') for x in customAllergens]
+            customAllergens = [x.lower() for x in customAllergens]
+            re_SelectedKeyWords = re.compile("|".join(customAllergens))
+            print(re_SelectedKeyWords)
         if "ica.se" in InputURL:
             ingredients, name = SearchICA(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)
             print("ICA selected")
-            window.close()
         if "coop.se" in InputURL:
             ingredients, name = SearchCOOP(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)
             print("Coop selected")
-            window.close()
-        if values["-KEYWORDS-"] == "Gluten":
-            re_SelectedKeyWords = re.compile("|".join(GlutenFreeKeyWords))
-            AllergenFree = False
-        elif values["-KEYWORDS-"] == "Lactose":
-            re_SelectedKeyWords = re.compile("|".join(LactoseKeyWords))
-            AllergenFree = False
-        elif values["-KEYWORDS-"] == "Nuts":
-            re_SelectedKeyWords = re.compile("|".join(DeezNutsKeyWords))
-        elif values["-KEYWORDS-"] == "Custom Allergens":
-          customAllergens = values["-CUSWORDS-"].split(',')
-          customAllergens = [x.strip(' ') for x in customAllergens]
-          customAllergens = [x.lower() for x in customAllergens]
-          re_SelectedKeyWords = re.compile("|".join(customAllergens))
-          print(re_SelectedKeyWords)
+
         if InputURL == "":
             InputURL = "https://www.coop.se/handla/varor/brod-bageri/ostkex-majskakor-tilltugg/majskakor-riskakor/majskakor-graddfil-lok-7340011469773"
             print("No input")
