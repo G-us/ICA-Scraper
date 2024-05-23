@@ -5,12 +5,18 @@ import re
 from ICAScraper import SearchICA
 import textwrap3
 from colorama import Fore, Style
+from ctypes import windll
+from PIL import Image
+windll.shcore.SetProcessDpiAwareness(1)
+
+productImageDir = r"C:\Users\HenryParsons\PycharmProjects\SafeBites\productImage.png"
 
 dataSet = {
     "AllergenStatus": False,
     "Ingredients": "",
     "DetectedAllergens": "",
     "ProductTitle": ""
+
 }
 
 GlutenFreeKeyWords = [
@@ -45,7 +51,7 @@ layout = [
     [sg.Text(key="-PRODUCTNAME-", border_width=0, pad=0, text_color="black"),
      sg.Text(key='-ALLERGENSTATUS-', border_width=0, pad=0)],
     [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
-     sg.Image(key="-IMAGE-", pad=0)],
+     sg.Image(productImageDir, expand_x=True, expand_y=True, key="-PRODUCTIMAGE-", subsample=4)],
     [sg.Text(key="-ALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='red')],
     [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
      sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
@@ -63,18 +69,18 @@ def convertTuple(tup):
 
 
 def CheckForAllergens(returnedIngredients, name):
-    returnedIngredients = str(returnedIngredients).lower()
+    IngredientsToBeChecked = str(returnedIngredients).lower()
     print("checking")
 
-    if re_SelectedKeyWords.search(returnedIngredients):
-        detectedAllergens = re_SelectedKeyWords.findall(returnedIngredients)
+    if re_SelectedKeyWords.search(IngredientsToBeChecked):
+        detectedAllergens = re_SelectedKeyWords.findall(IngredientsToBeChecked)
         dataSet["Ingredients"] = textwrap3.fill(returnedIngredients, WrapSize)
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = True
         dataSet["DetectedAllergens"] = detectedAllergens
         PrintResult()
     else:
-        detectedAllergens = re_SelectedKeyWords.findall(returnedIngredients)
+        detectedAllergens = re_SelectedKeyWords.findall(IngredientsToBeChecked)
         dataSet["Ingredients"] = textwrap3.fill(returnedIngredients, WrapSize)
         dataSet["ProductTitle"] = name
         dataSet["AllergenStatus"] = False
@@ -84,6 +90,7 @@ def CheckForAllergens(returnedIngredients, name):
 
 def PrintResult():
     print(Style.BRIGHT + Fore.BLUE + "Product: " + Fore.YELLOW + dataSet["ProductTitle"] + Style.RESET_ALL)
+    window['-PRODUCTIMAGE-'].update(productImageDir, subsample=4)
     if not dataSet["AllergenStatus"]:
         print(Fore.BLUE + "Result: " + Fore.GREEN + values['-KEYWORDS-'] + " Free")
         print(Style.RESET_ALL)
@@ -103,7 +110,7 @@ def PrintResult():
         window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
         window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='DarkRed')
         window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
-        window['-ALLERGENS-'].update("Allergens: " + convertTuple(re_SelectedKeyWords.findall(dataSet["Ingredients"])), text_color="DarkRed")
+        window['-ALLERGENS-'].update("Allergens: " + convertTuple(dataSet["DetectedAllergens"]), text_color="DarkRed")
 
 
 while True:
@@ -114,6 +121,8 @@ while True:
     else:
         window["-CUSWORDS-"].update(visible=False)
     if event == sg.WINDOW_CLOSED or event == "-EXIT-":
+        im = Image.open('placeholder.png')
+        im.save("ProductImage.png", "png")
         break
     if event == "-SUBMIT-":
         if values["-KEYWORDS-"] == "Gluten":
@@ -135,11 +144,13 @@ while True:
             re_SelectedKeyWords = re.compile("|".join(customAllergens))
             print(re_SelectedKeyWords)
         if "ica.se" in InputURL:
+            window['-PRODUCTNAME-'].update("Searching...")
             ingredients, name = SearchICA(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)
             print("ICA selected")
         if "coop.se" in InputURL:
+            window['-PRODUCTNAME-'].update("Searching...")
             ingredients, name = SearchCOOP(InputURL)
             CheckForAllergens(ingredients, name)
             print(dataSet)

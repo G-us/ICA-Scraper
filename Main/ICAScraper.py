@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import element_to_be_clickable, visibility_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
+from urllib.request import urlretrieve
 
 from PIL import Image
 
@@ -11,13 +12,7 @@ chrome_options = Options()
 chrome_options.add_argument("--no-sandbox")
 
 
-
-def ResizeImage(image, size):
-    with Image.open(image) as im:
-        im.thumbnail(size)
-        im.save(image)
-        print("Resized image, name: " + image)
-        return image
+#chrome_options.add_argument("--headless=new")
 
 
 def convertTuple(tup):
@@ -53,14 +48,21 @@ def SearchICA(InputURL):
         visibility_of_element_located(
             (By.XPATH, "//*[contains(text(), 'Ingredienser')]")))
     productName = driver.find_element(
-        By.XPATH,
-        "/html/body/div[1]/div/div[1]/div[2]/main/div/div[1]/div/div[2]/div/div[1]/h1"
+        By.CSS_SELECTOR,
+        "._display_1e1p0_1"
     ).text
 
     ingredients = driver.find_element(
         By.XPATH,
         "//*[contains(text(), 'Ingredienser')]/following-sibling::*").text
     print(ingredients)
-    ingredients = str(ingredients).lower()
+    ingredients = ingredients.split("Näringsvärde")[0]
+    img_url_element = driver.find_element(By.XPATH, '/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/ul/li/button/img')
+    img_url = img_url_element.get_attribute("src")
+    urlretrieve(img_url, "productImage.webp")
+
+    # Open the WebP image
+    im = Image.open('productImage.webp').convert("RGB")
+    im.save("ProductImage.png", "png")
 
     return ingredients, productName

@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import element_to_be_clickable, visibility_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
+
 dataSet = {
     "AllergenStatus": False,
     "Ingredients": "",
@@ -17,6 +18,7 @@ Product_Name = ""
 chrome_options = Options()
 
 chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--headless=new")
 
 
 
@@ -45,9 +47,7 @@ def SearchCOOP(InputURL):
     Product_Button = driver.find_element(
         By.XPATH, "//*[contains(text(), 'Produktfakta')]")
     Product_Button.click()
-    WebDriverWait(driver, 10).until(visibility_of_element_located((By.ID, "Produktfakta")))
-    Product_Ingredients = driver.find_element(
-        By.XPATH, "//*[@id='Produktfakta']/div/div[1]/div").text
+    Product_Ingredients = driver.find_element(By.XPATH, '//div[@class="u-marginBmd"]/div').text
     Product_Name = driver.find_element(By.CLASS_NAME, "ItemInfo-heading").text
     print(Product_Ingredients)
     print(Product_Name)
