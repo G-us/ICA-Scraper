@@ -16,12 +16,15 @@ windll.shcore.SetProcessDpiAwareness(1)
 
 productImageDir = r"C:\Users\HenryParsons\PycharmProjects\SafeBites\productImage.png"
 
+previousURL = ""
+
 dataSet = {
     "AllergenStatus": False,
     "Ingredients": "",
     "DetectedAllergens": "",
     "ProductTitle": "",
-    "ProductCertified": ""
+    "ProductCertified": "",
+    "PotentialAllergens": ""
 
 }
 
@@ -68,6 +71,7 @@ layout = [
     [sg.Text(key="-INGREDIENTS-", border_width=0, pad=0, font=IngredientsFont, text_color='black'),
      sg.Image(productImageDir, expand_x=True, expand_y=True, key="-PRODUCTIMAGE-", subsample=4)],
     [sg.Text(key="-ALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='red')],
+     [sg.Text(key="-POTALLERGENS-", border_width=0, pad=0, font=IngredientsFont, text_color='yellow')],
     [sg.Button('', image_data=SubmitImage, image_size=(50, 50), key="-SUBMIT-", border_width=0),
      sg.Button('', image_data=ExitImage, image_size=(50, 50), key="-EXIT-", border_width=0)]]
 
@@ -156,6 +160,12 @@ def PrintResult():
         window['-PRODUCTNAME-'].update(dataSet["ProductTitle"] + " is ")
         window['-ALLERGENSTATUS-'].update((values['-KEYWORDS-'].lower()) + " free!", text_color='green')
         window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
+        if dataSet["PotentialAllergens"] != "":
+            window['-POTALLERGENS-'].update(
+                textwrap3.fill(("Listed Allergens: " + dataSet["PotentialAllergens"]), WrapSize),
+                text_color="DarkGoldenrod")
+        else:
+            window['-POTALLERGENS-'].update("")
         printStopTime = time.perf_counter()
         print(f"Printed in (Before Allergens) {printStopTime - printStartTime:0.4f} seconds")
         if dataSet["DetectedAllergens"] == "Certified Gluten Free":
@@ -184,6 +194,10 @@ def PrintResult():
         window['-ALLERGENSTATUS-'].update("not " + (values['-KEYWORDS-'].lower()) + " free", text_color='DarkRed')
         window['-INGREDIENTS-'].update("Ingredients: " + dataSet["Ingredients"])
         window['-ALLERGENS-'].update(textwrap3.fill(("Allergens: " + convertTuple(dataSet["DetectedAllergens"])), WrapSize), text_color="DarkRed")
+        if dataSet["PotentialAllergens"] != "":
+            window['-POTALLERGENS-'].update(textwrap3.fill(("Listed Allergens: " + dataSet["PotentialAllergens"]), WrapSize), text_color="DarkGoldenrod")
+        else:
+            window['-POTALLERGENS-'].update("")
         printStopTime = time.perf_counter()
         print(f"Printed in {printStopTime - printStartTime:0.4f} seconds")
 
@@ -227,29 +241,50 @@ while True:
             print(PosSelectedKeyWords)
         if "ica.se" in InputURL:
             print("ICA selected")
-            ingredients, name, certified = SearchICA(InputURL)
-            print("Allergen CHeck")
-            dataSet["Ingredients"] = textwrap3.fill(ingredients, WrapSize)
-            dataSet["ProductTitle"] = name
-            dataSet["ProductCertified"] = certified
-            AllergenCheckingPt1(ingredients, PosSelectedKeyWords, NegSelectedKeyWords)
-            print(dataSet)
+            if previousURL == InputURL:
+                ingredients = dataSet["Ingredients"]
+                name = dataSet["ProductTitle"]
+                certified = dataSet["ProductCertified"]
+                AllergenCheckingPt1(ingredients, PosSelectedKeyWords, NegSelectedKeyWords)
+            else:
+                ingredients, name, certified = SearchICA(InputURL)
+                print("Allergen CHeck")
+                try:
+                    finalIngredients, potentialAllergens = ingredients.split("?")
+                except:
+                    finalIngredients = ingredients
+                    potentialAllergens = ""
+                print("Ingredients split" + ingredients)
+                dataSet["PotentialAllergens"] = potentialAllergens
+                dataSet["Ingredients"] = textwrap3.fill(finalIngredients, WrapSize)
+                dataSet["ProductTitle"] = name
+                dataSet["ProductCertified"] = certified
+                AllergenCheckingPt1(finalIngredients, PosSelectedKeyWords, NegSelectedKeyWords)
+                print(dataSet)
+            previousURL = InputURL
             searchStop = time.perf_counter()
             print(f"Search took: {searchStop - searchingStart:0.4f}")
         if "coop.se" in InputURL:
-            print("ICA selected")
-            ingredients, name, certified = SearchCOOP(InputURL)
-            print("Allergen CHeck")
-            dataSet["Ingredients"] = textwrap3.fill(ingredients, WrapSize)
-            dataSet["ProductTitle"] = name
-            dataSet["ProductCertified"] = certified
-            AllergenCheckingPt1(ingredients, PosSelectedKeyWords, NegSelectedKeyWords)
-            print(dataSet)
+            print("COOP selected")
+            if previousURL == InputURL:
+                ingredients = dataSet["Ingredients"]
+                name = dataSet["ProductTitle"]
+                certified = dataSet["ProductCertified"]
+                AllergenCheckingPt1(ingredients, PosSelectedKeyWords, NegSelectedKeyWords)
+            else:
+                ingredients, name, certified = SearchCOOP(InputURL)
+                print("Allergen CHeck")
+                dataSet["Ingredients"] = textwrap3.fill(ingredients, WrapSize)
+                dataSet["ProductTitle"] = name
+                dataSet["ProductCertified"] = certified
+                AllergenCheckingPt1(ingredients, PosSelectedKeyWords, NegSelectedKeyWords)
+                print(dataSet)
             searchStop = time.perf_counter()
+            previousURL = InputURL
             print(f"Search took: {searchStop - searchingStart:0.4f}")
         if InputURL == "":
-            InputURL = randomProduct("COOP")
+            InputURL = randomProduct("ICA")
             print("No input")
             ingredients, name, certified = SearchCOOP(InputURL)
-            AllergenCheckingPt2(ingredients, name, certified)
+            AllergenCheckingPt2()
             print(dataSet)

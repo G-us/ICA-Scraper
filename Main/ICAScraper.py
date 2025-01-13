@@ -6,6 +6,8 @@ from selenium.common.exceptions import NoSuchElementException as e
 import time
 
 from PIL import Image
+from selenium.webdriver.ie.webdriver import WebDriver
+from selenium.webdriver.support.wait import WebDriverWait
 
 chrome_options = Options()
 
@@ -13,11 +15,11 @@ chrome_options.add_argument("--no-sandbox")
 
 chrome_options.experimental_options['prefs'] = {
     'profile.managed_default_content_settings.javascript': 2,
-    'profile.managed_default_content_settings.images': 2
+
 }
 
 
-chrome_options.add_argument("--headless=new")
+#chrome_options.add_argument("--headless=new")
 
 
 def convertTuple(tup):
@@ -46,6 +48,7 @@ def SearchICA(InputURL):
     driver = webdriver.Chrome(options=chrome_options)
     print("ICA Searching at url: " + InputURL)
     driver.get(InputURL)
+    WebDriverWait(driver, 60)
     #driver.delete_all_cookies()
     #WebDriverWait(driver, 10).until(
        # element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
@@ -86,10 +89,9 @@ def SearchICA(InputURL):
         if allergensInfo == "":
             print("No Allergens found")
         else:
-            ingredients = ingredients + "\n \n There are listed allergens, here they are: " + allergensInfo
+            ingredients = ingredients + "?" + allergensInfo
 
-    img_url_element = driver.find_element(By.XPATH,
-                                          '/html/body/div[1]/div/div[1]/div[2]/main/div/div[2]/div/ul/li/button/img')
+    img_url_element = driver.find_element(By.XPATH,'/html/body/div[1]/div/div[1]/main/div/div[2]/div/ul/li/button/img')
     img_url = img_url_element.get_attribute("src")
     print("Getting image")
     urlretrieve(img_url, "productImage.webp")
@@ -103,5 +105,6 @@ def SearchICA(InputURL):
     print(productCertified)
     searchingTimerEnd = time.perf_counter()
     print(f"ICA Scraper took {searchingTimerEnd - searchingTimerStart:0.4f} seconds")
+    print(ingredients)
 
     return ingredients, productName, productCertified
